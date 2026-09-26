@@ -67,7 +67,7 @@
     "publish": [
       {
         "provider": "generic",
-        "url": "https://updates.wireless.invalid/downloads"
+        "url": "https://github.com/anyiayetunde-droid/wireless/releases/download/v1.0.0"
       }
     ],
     "nsis": {
