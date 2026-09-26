@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Wireless</string>
+    <string name="status_idle">Turn on Bluetooth, then pair with your computer.</string>
+    <string name="section_paired">Paired devices — tap to connect</string>
+    <string name="section_found">Nearby devices — tap to pair</string>
+    <string name="btn_scan">Scan</string>
+    <string name="btn_disconnect">Disconnect</string>
+    <string name="perm_denied">Bluetooth permission is required.</string>
+
+    <!-- WiFi remote mode (laptop types into this phone) -->
+    <string name="mode_bluetooth">Bluetooth</string>
+    <string name="mode_wifi">WiFi Remote</string>
+    <string name="section_wifi">Laptop → phone</string>
+    <string name="wifi_status_idle">Enter your computer’s address and PIN, then tap Connect.</string>
+    <string name="wifi_missing">Enter the server address and PIN first.</string>
+    <string name="wifi_host_hint">Computer address, e.g. 192.168.1.5</string>
+    <string name="wifi_port_hint">Port</string>
+    <string name="wifi_pin_hint">PIN</string>
+    <string name="btn_wifi_connect">Connect</string>
+    <string name="btn_wifi_disconnect">Disconnect</string>
+    <string name="btn_wifi_settings">Open keyboard settings</string>
+    <string name="btn_wifi_accessibility">Open accessibility settings</string>
+    <string name="wifi_hint">1. Run “node server.js” on your computer and note the PIN.\n2. Connect here.\n3. In keyboard settings, switch to “WiFi Remote keyboard” and tap into any text field.\n4. On the computer open the Laptop page (/laptop) and type — keys land on this phone.</string>
+    <string name="ime_label">WiFi Remote keyboard</string>
+    <string name="ime_status_idle">WiFi Remote keyboard — type from the laptop page</string>
+    <string name="accessibility_label">WiFi Remote control</string>
+    <string name="accessibility_desc">Lets the laptop page send Back/Home/Recents and touch gestures to this phone.</string>
+</resources>

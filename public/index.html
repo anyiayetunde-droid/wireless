@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d1117" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Wireless" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+  <title>Wireless</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- Connect screen -->
+  <div id="connectScreen" class="connect-screen">
+    <a class="back-btn connect-back" href="/host" title="Back" aria-label="Back">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg>
+      <span>Back</span>
+    </a>
+    <div class="connect-card">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M10 13h.01M14 13h.01M18 13h.01M7.5 15.8h9"/></svg>
+      </div>
+      <h1>Wireless</h1>
+      <p class="sub">Type on your computer from your phone.</p>
+      <div class="pin-box">
+        <label for="pinInput">Enter the PIN shown on your computer</label>
+        <input id="pinInput" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="••••" />
+        <button id="connectBtn" class="primary">Connect</button>
+      </div>
+      <div id="connectStatus" class="connect-status"></div>
+    </div>
+  </div>
+
+  <!-- Main app -->
+  <div id="app" class="app hidden">
+    <header class="topbar">
+      <a class="back-btn" href="/host" title="Back" aria-label="Back">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg>
+        <span>Back</span>
+      </a>
+      <div class="brand">
+        <span id="statusDot" class="dot" title="Disconnected"></span>
+        <span class="brand-name">Wireless</span>
+      </div>
+      <nav class="modes">
+        <button data-mode="keys" class="mode-btn active">Keys</button>
+        <button data-mode="mouse" class="mode-btn">Mouse</button>
+        <button data-mode="text" class="mode-btn">Text</button>
+      </nav>
+      <button id="installBtn" class="ghost hidden" title="Install this app">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        Install
+      </button>
+      <button id="disconnectBtn" class="ghost" title="Disconnect" aria-label="Disconnect">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v8"/><path d="M6.6 6.2a8 8 0 1 0 10.8 0"/></svg>
+      </button>
+    </header>
+
+    <!-- Keyboard mode -->
+    <section id="keyboardMode" class="mode-panel">
+      <div id="keyboard" class="keyboard"></div>
+    </section>
+
+    <!-- Mouse mode -->
+    <section id="mouseMode" class="mode-panel hidden">
+      <div id="pad" class="pad">
+        <div class="pad-hint">Move = cursor · Tap = click · Two-finger drag = scroll</div>
+      </div>
+      <div class="mouse-bar">
+        <button data-btn="left" class="mouse-btn primary">Left</button>
+        <button data-btn="middle" class="mouse-btn">Middle</button>
+        <button data-btn="right" class="mouse-btn">Right</button>
+        <span class="mouse-spacer"></span>
+        <button id="scrollUp" class="mouse-btn">▲</button>
+        <button id="scrollDown" class="mouse-btn">▼</button>
+      </div>
+    </section>
+
+    <!-- Text mode -->
+    <section id="textMode" class="mode-panel hidden">
+      <textarea id="textInput" placeholder="Paste or type any text here — it will be typed on your computer. Emoji and other symbols are handled automatically."></textarea>
+      <div class="text-bar">
+        <button id="typeTextBtn" class="primary">Type text on computer</button>
+        <button id="clearTextBtn" class="ghost">Clear</button>
+      </div>
+      <div id="textStatus" class="text-status"></div>
+    </section>
+  </div>
+
+  <script src="/ui.js" defer></script>
+  <script src="/app.js"></script>
+</body>
+</html>

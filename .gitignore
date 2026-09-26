@@ -1,0 +1,38 @@
+node_modules/
+*.log
+.DS_Store
+
+# Build toolchain + installer outputs
+.toolchain/
+dist/
+dist-electron/
+.pkg-cache/
+
+# Signing material (private keys — regenerate with the setup scripts)
+.freebuff/*.pfx
+.freebuff/*.p12
+.freebuff/*.jks
+*.pfx
+
+# Local preview/build scratch (machine-specific paths)
+.freebuff/*.err
+.freebuff/*.zip
+.freebuff/*.cmd
+
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/keystore.properties
+android/*.keystore
+android/.idea/
+*.apk
+
+# Unrelated sibling project (has its own .env — never publish it)
+chat-ai/
+
+# One-time SDK/JDK downloads + signing scratch (machine-local)
+cmdline-tools.zip
+jdk17.zip
+.freebuff/

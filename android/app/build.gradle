@@ -1,0 +1,70 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+// Signing credentials come from android/keystore.properties (gitignored; see
+// scripts/setup-release-keystore.ps1). Defaults match that script's generated
+// keystore (android/wireless-release.keystore), so `assembleRelease` always
+// produces a signed APK.
+def keystoreProperties = new Properties()
+def keystorePropsFile = rootProject.file('keystore.properties')
+if (keystorePropsFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropsFile))
+}
+
+def relStoreFile = keystoreProperties['storeFile'] ?: 'wireless-release.keystore'
+def relStorePass = keystoreProperties['storePassword'] ?: 'wirelesspass'
+def relKeyAlias = keystoreProperties['keyAlias'] ?: 'wireless'
+def relKeyPass = keystoreProperties['keyPassword'] ?: 'wirelesspass'
+
+android {
+    namespace 'com.wireless.keyboard'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.wireless.keyboard"
+        minSdk 29          // BluetoothHidDevice needs API 28+; 29 avoids legacy permission fuss
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    signingConfigs {
+        release {
+            // storeFile is relative to android/ (where the keystore script writes it).
+            storeFile rootProject.file(relStoreFile)
+            storePassword relStorePass
+            keyAlias relKeyAlias
+            keyPassword relKeyPass
+        }
+    }
+
+    // The release build must not depend on downloading the lint toolchain
+    // (lint-checks/intellij-core) from dl.google.com — that makes offline or
+    // flaky-network release builds fail at :app:lintVitalAnalyzeRelease.
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+}

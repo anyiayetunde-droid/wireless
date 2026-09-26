@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0d1117" />
+  <title>Wireless — Host</title>
+  <link rel="icon" href="/icon-192.png" />
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    /* Page-specific: the pairing card. Everything else (top bar, page
+       padding, cards, pills, footer) comes from the shared shell. */
+    .host-card {
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 32px var(--pad-x) 28px;
+    }
+
+    .pin-label {
+      color: var(--text-mute);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-family: var(--font-mono);
+    }
+
+    .pin {
+      font-family: var(--font-mono);
+      font-size: clamp(38px, 11vw, 48px);
+      font-weight: 800;
+      letter-spacing: 10px;
+      text-indent: 10px; /* optically re-centre the letter-spacing */
+      margin: 6px 0 20px;
+      color: var(--brand);
+      text-shadow: 0 0 20px rgba(34, 211, 238, 0.45);
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .copy-btn {
+      font-size: 12px;
+      padding: 6px 10px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+      letter-spacing: 1px;
+      flex: none;
+    }
+
+    .qr {
+      margin: 4px 0 22px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .qr img {
+      width: min(240px, 62vw);
+      height: auto;
+      aspect-ratio: 1;
+      border-radius: var(--r-md);
+      background: #fff;
+      padding: 12px;
+      box-shadow: 0 0 24px rgba(34, 211, 238, 0.18);
+    }
+
+    .host-hint {
+      color: var(--text-dim);
+      margin: 0 0 20px;
+      line-height: 1.55;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .urls {
+      text-align: left;
+      margin: 0 0 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .urls a {
+      color: var(--link);
+      padding: 6px 0;
+      word-break: break-all;
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 14px;
+    }
+
+    .urls a:hover {
+      text-decoration: underline;
+      color: var(--brand);
+    }
+
+    .status-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 0 0;
+      border-top: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 14px;
+    }
+
+    .driver {
+      color: var(--text-dim);
+      font-size: 13px;
+      margin-top: 12px;
+      font-family: var(--font-mono);
+      line-height: 1.5;
+    }
+
+    .driver.warn {
+      color: var(--warn);
+    }
+
+    .driver svg.icon {
+      vertical-align: -0.12em;
+    }
+
+    .refresh {
+      margin-top: 14px;
+      color: var(--text-faint);
+      font-size: 13px;
+      font-family: var(--font-mono);
+    }
+
+    .next-steps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 18px;
+    }
+
+    .next-steps a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      background: var(--bg-1);
+    }
+
+    .next-steps a:hover {
+      color: var(--brand);
+      border-color: var(--border-strong);
+    }
+  </style>
+</head>
+<body class="app">
+  <header class="topbar">
+    <a class="back-btn" href="/" title="Back" aria-label="Back">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg>
+      <span>Back</span>
+    </a>
+    <div class="brand">
+      <span id="statusDot" class="dot" title="No phone connected"></span>
+      <span class="brand-name">Wireless — Host</span>
+    </div>
+    <nav class="topbar-nav" aria-label="Sections">
+      <a href="/host">Host</a>
+      <a href="/">Phone</a>
+      <a href="/laptop">Laptop</a>
+      <a href="/download">Downloads</a>
+    </nav>
+  </header>
+
+  <main class="page center">
+    <div class="card host-card">
+      <h1 class="card-title">Pair your phone</h1>
+      <p class="card-meta">Scan the QR, or enter the PIN manually.</p>
+
+      <div class="pin-label">PIN</div>
+      <div class="pin">
+        <span id="pin">····</span>
+        <button id="copyPin" class="ghost copy-btn" type="button" title="Copy PIN">Copy</button>
+      </div>
+
+      <div class="qr">
+        <img id="qrImg" src="/qr.png" alt="QR code linking to the keyboard page" />
+      </div>
+
+      <p class="host-hint">
+        Scan the QR with your phone camera — it opens the keyboard page and connects
+        automatically. Then click into the window you want to type in.
+      </p>
+
+      <div class="urls" id="urls"></div>
+
+      <div class="status-line">
+        <span id="statusText">Connecting…</span>
+      </div>
+
+      <div class="next-steps">
+        <a href="/laptop">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4.5" width="16" height="11" rx="1.5"/><path d="M2.5 18.5h19l-1.2-3h-16.6l-1.2 3z"/></svg>
+          Type into your phone
+        </a>
+        <a href="/download">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          Get the app
+        </a>
+      </div>
+
+      <div class="driver" id="driver"></div>
+      <div class="refresh">This page refreshes automatically.</div>
+    </div>
+  </main>
+
+  <script src="/ui.js" defer></script>
+  <script>
+    (async function poll() {
+      try {
+        const res = await fetch('/api/status', { cache: 'no-store' });
+        const s = await res.json();
+
+        document.getElementById('pin').textContent = s.pin;
+        document.getElementById('statusText').textContent =
+          s.clients === 0
+            ? 'Waiting for phone…'
+            : s.clients === 1
+              ? '1 phone connected'
+              : s.clients + ' phones connected';
+        document.getElementById('statusDot').classList.toggle('connected', s.clients > 0);
+
+        const urls = document.getElementById('urls');
+        if (!urls.dataset.built) {
+          urls.dataset.built = '1';
+          if (!s.urls.length) {
+            const empty = document.createElement('div');
+            empty.className = 'host-hint';
+            empty.textContent = 'No LAN IP found — check your network.';
+            urls.appendChild(empty);
+          }
+          for (const ip of s.urls) {
+            const a = document.createElement('a');
+            a.href = 'http://' + ip + ':' + s.port + '/';
+            a.textContent = 'http://' + ip + ':' + s.port + '/';
+            urls.appendChild(a);
+          }
+          document.getElementById('qrImg').src = '/qr.png?t=' + Date.now();
+        }
+
+        const d = document.getElementById('driver');
+        if (s.driver && !s.driver.ok) {
+          d.classList.add('warn');
+          d.textContent = 'Driver: ' + s.driver.name + ' — ' + (s.driver.hint || 'not available');
+        } else if (s.driver) {
+          d.textContent = 'Driver: ' + s.driver.name;
+        }
+      } catch {
+        document.getElementById('statusText').textContent = 'Host unreachable';
+      }
+      setTimeout(poll, 1500);
+    })();
+
+    document.getElementById('copyPin').addEventListener('click', async (event) => {
+      const btn = event.currentTarget;
+      const pin = document.getElementById('pin').textContent;
+      try {
+        await navigator.clipboard.writeText(pin);
+        btn.textContent = 'Copied';
+      } catch {
+        btn.textContent = 'PIN: ' + pin;
+      }
+      setTimeout(() => (btn.textContent = 'Copy'), 1400);
+    });
+  </script>
+</body>
+</html>

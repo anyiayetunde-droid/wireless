@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Laptop Remote — Wireless</title>
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    /* Page-specific only. Colours come from the tokens in style.css so this
+       page can never drift from the rest of the app. */
+    .connect-card {
+      max-width: 400px;
+    }
+    .connect-hint {
+      color: var(--text-dim);
+      font-size: 14px;
+      line-height: 1.55;
+      text-align: left;
+      background: var(--bg-0);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 14px 16px;
+      margin-top: 16px;
+    }
+    .laptop-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px var(--pad-x);
+      background: var(--bg-1);
+      border-bottom: 1px solid var(--border);
+    }
+    .route {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
+    .route b {
+      color: var(--text);
+    }
+    .route .dot {
+      width: 9px;
+      height: 9px;
+    }
+    .kbd-hint {
+      padding: 12px var(--pad-x);
+      color: var(--text-faint);
+      font-size: 14px;
+      text-align: center;
+      background: var(--bg-0);
+      border-bottom: 1px solid var(--border);
+    }
+    .pad-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--pad-x);
+      padding-bottom: calc(var(--pad-x) + env(safe-area-inset-bottom));
+      min-height: 0;
+    }
+    .phone-pad {
+      position: relative;
+      height: 100%;
+      max-height: 100%;
+      aspect-ratio: 9 / 18;
+      border-radius: 16px;
+      border: 2px solid var(--border-strong);
+      background-image:
+        linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
+      background-size: 24px 24px, 24px 24px;
+      background-color: var(--bg-2);
+      touch-action: none;
+      overflow: hidden;
+      cursor: crosshair;
+      box-shadow: 0 0 24px rgba(34, 211, 238, 0.12) inset;
+    }
+    .phone-pad .pad-hint {
+      font-size: 14px;
+    }
+    #textMode {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: var(--pad-x);
+      gap: 12px;
+    }
+    .app {
+      max-width: 560px;
+      margin: 0 auto;
+      background: var(--bg-0);
+      box-shadow: 0 0 0 1px var(--border-strong), 0 0 48px rgba(0, 0, 0, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <!-- Connect screen -->
+  <div id="connectScreen" class="connect-screen">
+    <a class="back-btn connect-back" href="/host" title="Back" aria-label="Back">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg>
+      <span>Back</span>
+    </a>
+    <div class="connect-card">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4.5" width="16" height="11" rx="1.5"/><path d="M2.5 18.5h19l-1.2-3h-16.6l-1.2 3z"/></svg>
+      </div>
+      <h1>Laptop Remote</h1>
+      <p class="sub">Type into your phone from this computer.</p>
+      <div class="pin-box">
+        <label for="pinInput">Enter the PIN shown on your computer</label>
+        <input id="pinInput" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="••••" />
+        <button id="connectBtn" class="primary">Connect</button>
+      </div>
+      <div id="connectStatus" class="connect-status"></div>
+      <div class="connect-hint">
+        <b>How it works:</b> on your phone, open the <b>Wireless</b> app →
+        <b>WiFi Remote</b> tab → enter this computer's address + PIN. Then keep
+        the keyboard (or accessibility service) enabled and type here — your
+        keystrokes land in whatever app has focus on the phone.
+      </div>
+    </div>
+  </div>
+
+  <!-- Main app -->
+  <div id="app" class="app hidden">
+    <div class="topbar">
+      <a class="back-btn" href="/host" title="Back" aria-label="Back">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg>
+        <span>Back</span>
+      </a>
+      <div class="brand">
+        <span id="statusDot" class="dot" title="Disconnected"></span>
+        <span class="brand-name">Laptop Remote</span>
+      </div>
+      <nav class="modes">
+        <button data-mode="keys" class="mode-btn active">Keys</button>
+        <button data-mode="text" class="mode-btn">Text</button>
+        <button data-mode="touch" class="mode-btn">Touch</button>
+      </nav>
+      <button id="disconnectBtn" class="ghost" title="Disconnect" aria-label="Disconnect">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v8"/><path d="M6.6 6.2a8 8 0 1 0 10.8 0"/></svg>
+      </button>
+    </div>
+
+    <div class="laptop-bar">
+      <div class="route">
+        <span class="dot" id="phoneDot"></span>
+        <span>Typing into: <b id="routeLabel">this computer</b></span>
+      </div>
+      <button id="navBtn" class="ghost" style="padding: 8px 12px; font-size: 14px" title="Phone navigation" aria-label="Phone navigation" aria-expanded="false" aria-controls="navMenu">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+    <div id="navMenu" class="hidden">
+      <div class="kbd-hint" style="background: var(--bg-2); display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; padding: 8px">
+        <button class="mouse-btn" data-nav="back" style="flex: none">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg>
+          Back
+        </button>
+        <button class="mouse-btn" data-nav="home" style="flex: none">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/></svg>
+          Home
+        </button>
+        <button class="mouse-btn" data-nav="recents" style="flex: none">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          Recents
+        </button>
+        <button class="mouse-btn" data-nav="notifications" style="flex: none">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 2.5 6.5H3.5C4.5 14.5 6 13 6 9z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
+          Notifications
+        </button>
+        <button class="mouse-btn" data-nav="quick_settings" style="flex: none">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h8M16 17h4"/><circle cx="15" cy="7" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="14" cy="17" r="1.8"/></svg>
+          Quick settings
+        </button>
+      </div>
+    </div>
+
+    <!-- Keys mode -->
+    <section id="keyboardMode" class="mode-panel">
+      <div class="kbd-hint">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M10 13h.01M14 13h.01M18 13h.01M7.5 15.8h9"/></svg>
+      Physical keyboard live — just type. Click a key below to tap it on the phone.
+    </div>
+      <div id="keyboard" class="keyboard"></div>
+    </section>
+
+    <!-- Text mode -->
+    <section id="textMode" class="mode-panel hidden">
+      <textarea id="textInput" placeholder="Paste or type text here — it will be typed into the focused field on your phone."></textarea>
+      <div class="text-bar">
+        <button id="typeTextBtn" class="primary">Type on phone</button>
+        <button id="clearTextBtn" class="ghost">Clear</button>
+      </div>
+      <div id="textStatus" class="text-status"></div>
+    </section>
+
+    <!-- Touch mode -->
+    <section id="touchMode" class="mode-panel hidden">
+      <div class="pad-wrap">
+        <div id="phonePad" class="phone-pad">
+          <div class="pad-hint">This is your phone screen. Tap = tap · Drag = swipe · Two fingers = scroll</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="/ui.js" defer></script>
+  <script src="/laptop.js"></script>
+</body>
+</html>

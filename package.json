@@ -1,0 +1,116 @@
+{
+  "name": "wireless",
+  "version": "1.0.0",
+  "description": "Wireless — every device controls every device: use your phone as a keyboard + trackpad for your computer, or your laptop as a remote for your phone.",
+  "main": "desktop/main.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "node scripts/build-installers.js",
+    "app": "electron .",
+    "app:win": "electron-builder --win",
+    "app:linux": "electron-builder --linux",
+    "app:win:signed": "node scripts/build-win-signed.js",
+    "android:release": "node scripts/build-apk-release.js",
+    "test": "node --test test/*.test.js"
+  },
+  "build": {
+    "appId": "app.wireless.keyboard",
+    "productName": "Wireless",
+    "files": [
+      "desktop/**/*",
+      "server.js",
+      "lib/**/*",
+      "public/**/*"
+    ],
+    "asar": false,
+    "directories": {
+      "output": "dist-electron",
+      "buildResources": "build"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "public/icon.ico"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "tar.gz",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "public/icon-512.png",
+      "category": "Utility",
+      "maintainer": "Wireless <support@wireless.example>",
+      "artifactName": "Wireless-${version}.${ext}"
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://updates.wireless.invalid/downloads"
+      }
+    ],
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "Wireless-Setup-${version}.${ext}",
+      "shortcutName": "Wireless",
+      "createDesktopShortcut": true
+    },
+    "portable": {
+      "artifactName": "Wireless-${version}-portable.${ext}"
+    }
+  },
+  "pkg": {
+    "scripts": [
+      "server.js",
+      "lib/**/*.js"
+    ],
+    "assets": [
+      "public/**/*",
+      "README.md"
+    ],
+    "targets": [
+      "node20-win-x64",
+      "node20-linux-x64",
+      "node20-macos-x64",
+      "node20-macos-arm64"
+    ]
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9",
+    "qrcode": "^1.5.4",
+    "ws": "^8.18.0"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@yao-pkg/pkg": "^6.22.0",
+    "electron": "^44.2.0",
+    "electron-builder": "^26.15.3",
+    "esbuild": "^0.28.2",
+    "postject": "^1.0.0-alpha.6"
+  }
+}
